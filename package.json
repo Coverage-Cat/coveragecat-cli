@@ -1,0 +1,32 @@
+{
+  "name": "@coveragecat/cli",
+  "version": "0.1.0",
+  "description": "Official Coverage Cat CLI for discovery, MCP, and agent-operable API requests.",
+  "type": "module",
+  "bin": {
+    "coveragecat": "./bin/coveragecat.js"
+  },
+  "files": [
+    "README.md",
+    "bin",
+    "lib"
+  ],
+  "scripts": {
+    "test": "node --test test/**/*.test.mjs"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Coverage-Cat/coveragecat-cli.git"
+  },
+  "homepage": "https://www.coveragecat.com/developers/cli",
+  "bugs": {
+    "url": "https://github.com/Coverage-Cat/coveragecat-cli/issues"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "license": "UNLICENSED"
+}

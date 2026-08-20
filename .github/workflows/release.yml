@@ -1,0 +1,64 @@
+name: release
+
+on:
+  workflow_dispatch:
+    inputs:
+      publish_npm:
+        description: "Publish @coveragecat/cli to npm after tests pass"
+        required: false
+        default: false
+        type: boolean
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+  id-token: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    env:
+      NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+        with:
+          fetch-depth: 0
+
+      - name: Set up Node
+        uses: actions/setup-node@c7b40d46f58ca463a087d4cf65a7b9f5c7f72d04 # v6.0.0
+        with:
+          node-version: 22
+          registry-url: https://registry.npmjs.org
+
+      - name: Test CLI package
+        run: npm test
+
+      - name: Pack CLI tarball
+        id: pack
+        run: |
+          TARBALL="$(npm pack)"
+          echo "tarball=${TARBALL}" >> "$GITHUB_OUTPUT"
+
+      - name: Upload packaged tarball artifact
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: coveragecat-cli-tarball
+          path: ${{ steps.pack.outputs.tarball }}
+          retention-days: 14
+
+      - name: Create or update GitHub release
+        if: startsWith(github.ref, 'refs/tags/v')
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG_NAME: ${{ github.ref_name }}
+        run: |
+          gh release view "$TAG_NAME" >/dev/null 2>&1 || \
+            gh release create "$TAG_NAME" --title "$TAG_NAME" --notes "Coverage Cat CLI release $TAG_NAME"
+          gh release upload "$TAG_NAME" "${{ steps.pack.outputs.tarball }}" --clobber
+
+      - name: Publish to npm
+        if: (startsWith(github.ref, 'refs/tags/v') || inputs.publish_npm) && secrets.NPM_TOKEN != ''
+        run: npm publish --provenance --access public
