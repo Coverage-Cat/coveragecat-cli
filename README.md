@@ -8,7 +8,7 @@ Official Coverage Cat CLI for discovery, MCP, read-only tools, and authenticated
 git clone https://github.com/Coverage-Cat/coveragecat-cli.git
 cd coveragecat-cli
 npm pack
-npm install -g ./coveragecat-cli-0.1.0.tgz
+npm install -g ./coveragecat-cli-0.1.1.tgz
 coveragecat help
 ```
 
