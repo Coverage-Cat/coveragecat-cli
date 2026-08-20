@@ -36,7 +36,7 @@ The canonical Homebrew tap lives at `https://github.com/Coverage-Cat/homebrew-co
 - source repo: `Coverage-Cat/coveragecat-cli`
 - Homebrew tap: `Coverage-Cat/homebrew-coveragecat`
 
-Tagged `v*` releases run the GitHub Actions workflow that tests this package, uploads the packed tarball to the GitHub release, and publishes `@coveragecat/cli` to npm through npm trusted publishing.
+Tagged `v*` releases run the GitHub Actions workflow that tests this package and uploads the packed tarball to the GitHub release. npm publication uses the same workflow when repository npm publish auth is configured.
 
 ## Common commands
 

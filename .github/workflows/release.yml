@@ -19,6 +19,8 @@ permissions:
 jobs:
   release:
     runs-on: ubuntu-latest
+    env:
+      NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
     steps:
       - name: Checkout code
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
@@ -58,5 +60,5 @@ jobs:
           gh release upload "$TAG_NAME" "${{ steps.pack.outputs.tarball }}" --clobber
 
       - name: Publish to npm
-        if: startsWith(github.ref, 'refs/tags/v') || inputs.publish_npm
+        if: (startsWith(github.ref, 'refs/tags/v') || inputs.publish_npm) && secrets.NPM_TOKEN != ''
         run: npm publish --provenance --access public
