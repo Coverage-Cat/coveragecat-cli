@@ -4,7 +4,7 @@
   "description": "Official Coverage Cat CLI for discovery, MCP, and agent-operable API requests.",
   "type": "module",
   "bin": {
-    "coveragecat": "./bin/coveragecat.js"
+    "coveragecat": "bin/coveragecat.js"
   },
   "files": [
     "README.md",
