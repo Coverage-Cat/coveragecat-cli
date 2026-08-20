@@ -2,13 +2,20 @@
 
 Official Coverage Cat CLI for discovery, MCP, read-only tools, and authenticated agent-operable API requests.
 
+## Install from npm
+
+```sh
+npm install -g @coveragecat/cli
+coveragecat help
+```
+
 ## Install from source
 
 ```sh
 git clone https://github.com/Coverage-Cat/coveragecat-cli.git
 cd coveragecat-cli
-npm pack
-npm install -g ./coveragecat-cli-0.1.1.tgz
+package_tgz="$(npm pack --silent)"
+npm install -g "./$package_tgz"
 coveragecat help
 ```
 
@@ -16,6 +23,7 @@ coveragecat help
 
 ```sh
 brew tap Coverage-Cat/coveragecat
+brew trust coverage-cat/coveragecat
 brew install coveragecat
 coveragecat help
 ```
@@ -28,9 +36,7 @@ The canonical Homebrew tap lives at `https://github.com/Coverage-Cat/homebrew-co
 - source repo: `Coverage-Cat/coveragecat-cli`
 - Homebrew tap: `Coverage-Cat/homebrew-coveragecat`
 
-Tagged `v*` releases run the GitHub Actions workflow that tests this package, uploads the packed tarball to the GitHub release, and publishes `@coveragecat/cli` to npm when `NPM_TOKEN` is configured.
-
-At the moment, install from the source repo or the Homebrew tap. The npm package name is reserved in the package metadata, but a live npm publication still requires org/package setup plus `NPM_TOKEN`.
+Tagged `v*` releases run the GitHub Actions workflow that tests this package, uploads the packed tarball to the GitHub release, and publishes `@coveragecat/cli` to npm through npm trusted publishing.
 
 ## Common commands
 

@@ -1,6 +1,6 @@
 {
   "name": "@coveragecat/cli",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Official Coverage Cat CLI for discovery, MCP, and agent-operable API requests.",
   "type": "module",
   "bin": {
