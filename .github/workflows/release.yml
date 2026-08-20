@@ -69,5 +69,5 @@ jobs:
           gh release upload "$TAG_NAME" "${{ steps.pack.outputs.tarball }}" --clobber
 
       - name: Publish to npm
-        if: (startsWith(github.ref, 'refs/tags/v') || inputs.publish_npm) && steps.npm_auth.outputs.enabled == 'true'
+        if: inputs.publish_npm && steps.npm_auth.outputs.enabled == 'true'
         run: npm publish --provenance --access public
