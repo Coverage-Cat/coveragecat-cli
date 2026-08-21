@@ -2,6 +2,12 @@
 
 Official Coverage Cat CLI for discovery, MCP, read-only tools, and authenticated agent-operable API requests.
 
+## Who this is for
+
+The CLI is for operator partners who already have an issued Coverage Cat bearer key and want direct discovery/request tooling, plus MCP access to the read-only calculators and homeowners-agent finder.
+
+If you are building a consumer-facing AI agent for an individual shopper, do not install the CLI for that shopper handoff. Install the Coverage Cat umbrella or homeowners skill in that agent instead, and let the skill use Coverage Cat's public consumer prefill and resume URLs.
+
 ## Install from npm
 
 ```sh
