@@ -6,7 +6,7 @@ Official Coverage Cat CLI for discovery, MCP, read-only tools, and authenticated
 
 The CLI is for operator partners who already have an issued Coverage Cat bearer key and want direct discovery/request tooling, plus MCP access to the read-only calculators and homeowners-agent finder.
 
-If you are building a consumer-facing AI agent for an individual shopper, do not install the CLI for that shopper handoff. Install the Coverage Cat umbrella or homeowners skill in that agent instead, and let the skill use Coverage Cat's public consumer prefill and resume URLs.
+If you are building a consumer-facing AI agent for an individual shopper, do not install the CLI for that shopper handoff. Install the Coverage Cat umbrella or homeowners skill in that agent instead, and let the skill use Coverage Cat's public consumer prefill flow, keep the returned `uid` plus `intake_access_token` in chat, and fall back to `resume_url` only when the runtime cannot continue directly.
 
 ## Install from npm
 
@@ -56,6 +56,11 @@ coveragecat request POST /api/agent/homeowners/quotes \
   --bearer "$COVERAGECAT_BEARER" \
   --idempotency-key demo-1 \
   --json '{"uid":"abc123"}'
+coveragecat request POST /api/consumer/umbrella/prefill \
+  --idempotency-key consumer-prefill-1 \
+  --json '{"credit_consent_pending":true,"intake":{"full_name":"Taylor Example"}}'
+coveragecat request GET /api/intake/abc123/issues \
+  --bearer "$COVERAGECAT_INTAKE_ACCESS_TOKEN"
 ```
 
 ## Supported surfaces
@@ -64,3 +69,4 @@ coveragecat request POST /api/agent/homeowners/quotes \
 - Product and docs MCP server manifests plus list operations
 - Read-only calculator and homeowners-agent-finder endpoints
 - Generic authenticated requests against the agent-operable API surface
+- Generic public requests against consumer-prefill and direct-intake follow-up endpoints

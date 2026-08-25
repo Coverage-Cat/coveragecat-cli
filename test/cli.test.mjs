@@ -112,6 +112,62 @@ test("generic request sends bearer, version, and idempotency headers", async () 
   assert.match(stdout.text(), /"pending_quotes"/);
 });
 
+test("consumer prefill requests also send the API version header", async () => {
+  const stdout = capture();
+  const calls = [];
+
+  const exitCode = await runCli(
+    [
+      "request",
+      "POST",
+      "/api/consumer/umbrella/prefill",
+      "--idempotency-key",
+      "consumer-prefill-1",
+      "--json",
+      '{"credit_consent_pending":true,"intake":{"full_name":"Taylor Example"}}',
+    ],
+    {
+      fetchImpl: async (url, options) => {
+        calls.push({ url, options });
+        return jsonResponse({ uid: "abc123", intake_access_token: "token-1" });
+      },
+      stdout: stdout.stream,
+    },
+  );
+
+  assert.equal(exitCode, 0);
+  assert.equal(calls[0].url, "https://www.coveragecat.com/api/consumer/umbrella/prefill");
+  assert.equal(calls[0].options.headers["coverage-cat-api-version"], "v1");
+  assert.equal(calls[0].options.headers["idempotency-key"], "consumer-prefill-1");
+  assert.deepEqual(JSON.parse(calls[0].options.body), {
+    credit_consent_pending: true,
+    intake: { full_name: "Taylor Example" },
+  });
+  assert.match(stdout.text(), /"intake_access_token": "token-1"/);
+});
+
+test("direct intake follow-up requests send bearer and API version headers", async () => {
+  const stdout = capture();
+  const calls = [];
+
+  const exitCode = await runCli(
+    ["request", "GET", "/api/intake/abc123/issues", "--bearer", "intake-token"],
+    {
+      fetchImpl: async (url, options) => {
+        calls.push({ url, options });
+        return jsonResponse({ resource: { status: "ready_for_review" } });
+      },
+      stdout: stdout.stream,
+    },
+  );
+
+  assert.equal(exitCode, 0);
+  assert.equal(calls[0].url, "https://www.coveragecat.com/api/intake/abc123/issues");
+  assert.equal(calls[0].options.headers.authorization, "Bearer intake-token");
+  assert.equal(calls[0].options.headers["coverage-cat-api-version"], "v1");
+  assert.match(stdout.text(), /"ready_for_review"/);
+});
+
 test("mcp product tools posts a JSON-RPC tools/list request", async () => {
   const stdout = capture();
   const calls = [];
