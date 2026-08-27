@@ -6,7 +6,11 @@ Official Coverage Cat CLI for discovery, MCP, read-only tools, and authenticated
 
 The CLI is for operator partners who already have an issued Coverage Cat bearer key and want direct discovery/request tooling, plus MCP access to the read-only calculators and homeowners-agent finder.
 
-If you are building a consumer-facing AI agent for an individual shopper, do not install the CLI for that shopper handoff. Install the Coverage Cat umbrella or homeowners skill in that agent instead, and let the skill use Coverage Cat's public consumer prefill flow, keep the returned `uid` plus `intake_access_token` in chat, and fall back to `resume_url` only when the runtime cannot continue directly.
+If you are building a consumer-facing AI agent for an individual shopper, do not install the CLI for that shopper handoff. Install the Coverage Cat umbrella or homeowners skill in that agent instead, let the skill use Coverage Cat's public consumer-prefill flow, keep the returned `uid` plus the freshest rotated `intake_access_token` in chat, continue the direct `/api/intake/:uid/...` follow-up loop there, and fall back to `resume_url` only when the runtime cannot continue directly.
+
+For umbrella consumer handoffs specifically, the intended direct-follow-up UX is: keep filling behind the scenes until `/api/intake/:uid/issues` reaches `ready_for_submission`, or until it returns a staged review plus bundled contact-detail `next_question`. On that staged review turn, show the assembled facts and ask for full name, email, and full address together in one message rather than one field at a time. Then submit from that same review turn, and only ask for soft-credit consent later if `/select` requires it after the user picks an offer. When Coverage Cat returns multiple offers, present the alternatives instead of collapsing the result to only the recommended default.
+
+For homeowners consumer handoffs specifically, the intended UX is: ask the user only for full name, email, and property address first, recover core shopper and occupancy facts such as date of birth, marital status, and owner-occupied vs new-purchase from the user's own context before calling `/api/consumer/homeowners/prefill`, let Coverage Cat estimate the remaining reviewable home fields, then show one completed review-and-soft-credit-consent card instead of a questionnaire.
 
 ## Install from npm
 
@@ -66,7 +70,7 @@ coveragecat request GET /api/intake/abc123/issues \
 ## Supported surfaces
 
 - Discovery JSON and OpenAPI downloads
-- Product and docs MCP server manifests plus list operations
+- Recommended product MCP well-known manifest and list operations
 - Read-only calculator and homeowners-agent-finder endpoints
 - Generic authenticated requests against the agent-operable API surface
 - Generic public requests against consumer-prefill and direct-intake follow-up endpoints
