@@ -168,11 +168,11 @@ test("direct intake follow-up requests send bearer and API version headers", asy
   assert.match(stdout.text(), /"ready_for_review"/);
 });
 
-test("mcp product tools posts a JSON-RPC tools/list request", async () => {
+test("mcp consumer tools posts a JSON-RPC tools/list request to the consumer transport", async () => {
   const stdout = capture();
   const calls = [];
 
-  const exitCode = await runCli(["mcp", "product", "tools"], {
+  const exitCode = await runCli(["mcp", "consumer", "tools"], {
     fetchImpl: async (url, options) => {
       calls.push({ url, options });
       return jsonResponse({ jsonrpc: "2.0", result: { tools: [] } });
@@ -181,7 +181,7 @@ test("mcp product tools posts a JSON-RPC tools/list request", async () => {
   });
 
   assert.equal(exitCode, 0);
-  assert.equal(calls[0].url, "https://www.coveragecat.com/api/agent/mcp");
+  assert.equal(calls[0].url, "https://www.coveragecat.com/api/consumer/mcp");
   assert.equal(calls[0].options.method, "POST");
   assert.deepEqual(JSON.parse(calls[0].options.body), {
     id: "cli-tools",
@@ -189,4 +189,22 @@ test("mcp product tools posts a JSON-RPC tools/list request", async () => {
     method: "tools/list",
   });
   assert.match(stdout.text(), /"tools": \[\]/);
+});
+
+test("mcp product manifest keeps the legacy alias but fetches consumer discovery metadata", async () => {
+  const stdout = capture();
+  const calls = [];
+
+  const exitCode = await runCli(["mcp", "product", "manifest"], {
+    fetchImpl: async (url, options) => {
+      calls.push({ url, options });
+      return jsonResponse({ name: "coverage-cat-product-mcp" });
+    },
+    stdout: stdout.stream,
+  });
+
+  assert.equal(exitCode, 0);
+  assert.equal(calls[0].url, "https://www.coveragecat.com/.well-known/mcp.json");
+  assert.equal(calls[0].options.method, "GET");
+  assert.match(stdout.text(), /"coverage-cat-product-mcp"/);
 });
