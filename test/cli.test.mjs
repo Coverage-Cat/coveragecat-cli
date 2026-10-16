@@ -54,6 +54,25 @@ test("discover fetches the public discovery document", async () => {
   assert.equal(stderr.text(), "");
 });
 
+test("integrations fetches the well-known integrations declaration", async () => {
+  const stdout = capture();
+  const calls = [];
+
+  const exitCode = await runCli(["integrations"], {
+    fetchImpl: async (url, options) => {
+      calls.push({ url, options });
+      return jsonResponse({ version: 3 });
+    },
+    stdout: stdout.stream,
+  });
+
+  assert.equal(exitCode, 0);
+  assert.equal(calls[0].url, "https://www.coveragecat.com/.well-known/integrations.json");
+  assert.equal(calls[0].options.method, "GET");
+  assert.equal(calls[0].options.headers.accept, "application/json");
+  assert.equal(stdout.text(), '{\n  "version": 3\n}\n');
+});
+
 test("tool command posts JSON to the matching read-only tool endpoint", async () => {
   const stdout = capture();
   const calls = [];
