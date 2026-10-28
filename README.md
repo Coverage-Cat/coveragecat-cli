@@ -1,5 +1,19 @@
 # Coverage Cat CLI
 
+## ChatGPT app
+
+For ChatGPT, connect the Streamable HTTP endpoint `https://www.coveragecat.com/api/chatgpt/mcp`.
+Use the tools advertised by that endpoint to prepare the application, obtain the
+shopper's consent, compare quotes, and select an offer. Present its `checkout_url`
+or `payment_url` as a link: the shopper completes document uploads and final
+checkout on Coverage Cat's website. Afterward, read status or the policy tool.
+Do not open or complete checkout for the shopper, collect card details in chat,
+or switch to another MCP/REST endpoint to bypass website checkout. ChatGPT's
+intake tokens and sessions work only on its dedicated endpoint.
+
+The default consumer MCP and REST instructions below apply to other hosts and
+retain their existing upload and payment capabilities.
+
 Official Coverage Cat CLI for discovery, MCP, read-only tools, and authenticated agent-operable API requests.
 
 ## Who this is for
@@ -12,7 +26,7 @@ If that agent first lands on `coveragecat.com`, start with `https://www.coverage
 
 If the runtime wants an owner-declared discovery summary instead of inferring endpoints, use `https://www.coveragecat.com/.well-known/integrations.json`. For delegated operator OAuth discovery, use `https://www.coveragecat.com/.well-known/oauth-protected-resource/api/agent/mcp` plus `https://www.coveragecat.com/.well-known/oauth-authorization-server`.
 
-If that consumer-facing runtime supports MCP, default it to Coverage Cat's no-OAuth consumer MCP. Register `https://www.coveragecat.com/.well-known/mcp.json` in ChatGPT and other manifest-aware hosts, or use `https://www.coveragecat.com/api/consumer/mcp` as the direct transport URL for local Codex CLI / desktop / IDE setups. Keep the session on the default consumer subset: `umbrella_consumer_prefill`, `homeowners_consumer_prefill`, `consumer_intake_issues`, `consumer_intake_patch`, plus `umbrella_consumer_select`, `umbrella_consumer_bind`, `umbrella_consumer_attach`, and `umbrella_consumer_payment` for umbrella post-quote follow-up. For umbrella, stay on that no-operator subset through `payment_needed`, secure payment UI when available, and `payment_url` instead of switching to delegated tools just to reach checkout. For homeowners, stay on the no-operator subset through review and quote follow-up, then let Coverage Cat's consumer portal finish final bind. Use `https://www.coveragecat.com/api/agent/mcp` only for delegated operator workflows that already have bearer auth or OAuth support.
+If that consumer-facing runtime supports MCP, default it to Coverage Cat's no-OAuth consumer MCP. Register `https://www.coveragecat.com/.well-known/mcp.json` in manifest-aware hosts, or use `https://www.coveragecat.com/api/consumer/mcp` as the direct transport URL for local Codex CLI / desktop / IDE setups. Keep the session on the default consumer subset: `umbrella_consumer_prefill`, `homeowners_consumer_prefill`, `consumer_intake_issues`, `consumer_intake_patch`, plus `umbrella_consumer_select`, `umbrella_consumer_bind`, `umbrella_consumer_attach`, and `umbrella_consumer_payment` for umbrella post-quote follow-up. For umbrella, stay on that no-operator subset through `payment_needed`, secure payment UI when available, and `payment_url` instead of switching to delegated tools just to reach checkout. For homeowners, stay on the no-operator subset through review and quote follow-up, then let Coverage Cat's consumer portal finish final bind. Use `https://www.coveragecat.com/api/agent/mcp` only for delegated operator workflows that already have bearer auth or OAuth support.
 If Coverage Cat MCP tools are unavailable in a runtime that supports MCP, stop and ask a short choice question instead of telling the user to register `https://www.coveragecat.com/.well-known/mcp.json` immediately.
 Ask the question on its own line exactly as:
 
